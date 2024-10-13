@@ -1,0 +1,16 @@
+#masthead-container:has(ytd-masthead[theater]) {
+  position: absolute;
+}
+
+ytd-watch-flexy[theater] #player-full-bleed-container.ytd-watch-flexy,
+ytd-watch-grid[theater] #player-full-bleed-container.ytd-watch-grid {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+ytd-watch-flexy[full-bleed-player] #full-bleed-container.ytd-watch-flexy,
+ytd-watch-grid[full-bleed-player] #full-bleed-container.ytd-watch-grid {
+  block-size: fit-content !important;
+  max-height: fit-content !important;
+}
