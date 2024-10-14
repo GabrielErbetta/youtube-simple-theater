@@ -1,17 +1,23 @@
 {
   "manifest_version": 3,
   "name": "YouTube Simple Theater",
+  "short_name": "SimplTheater",
   "description": "Simple full-height theater mode for YouTube. One button, one click, just works™.",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "icons": {
     "128": "icon-128.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://*.youtube.com/*"],
+      "matches": ["https://*.youtube.com/watch*"],
       "run_at": "document_end",
-      "js": ["theater-mode.js", "init.js"],
+      "js": ["theater-mode.js", "chat.js", "init.js"],
       "css": ["theater-mode.css"]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "youtube-simple-theater@gabrielerbetta.github.io"
+    }
+  }
 }

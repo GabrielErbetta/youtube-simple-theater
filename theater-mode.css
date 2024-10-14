@@ -1,5 +1,5 @@
 #masthead-container:has(ytd-masthead[theater]) {
-  position: absolute;
+  position: absolute !important;
 }
 
 ytd-watch-flexy[theater] #player-full-bleed-container.ytd-watch-flexy,
@@ -13,4 +13,10 @@ ytd-watch-flexy[full-bleed-player] #full-bleed-container.ytd-watch-flexy,
 ytd-watch-grid[full-bleed-player] #full-bleed-container.ytd-watch-grid {
   block-size: fit-content !important;
   max-height: fit-content !important;
+}
+
+ytd-live-chat-frame[theater-watch-while] {
+  top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }

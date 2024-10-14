@@ -7,7 +7,7 @@ But check out my inspirations [Better YouTube Theatre Mode](https://github.com/S
 ---
 
 ### TODO
-- [ ] Handle chat for livestreams
+- [x] Handle chat for livestreams
 - [ ] Firefox version
 - [ ] Proper icon
 - [ ] Publish in the extension stores
