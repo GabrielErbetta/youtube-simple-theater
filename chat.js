@@ -1,6 +1,6 @@
 class Chat {
   constructor() {
-    this.loadContainerObserver = new MutationObserver((mutations, observer) => {
+    this.loadContainerObserver = new MutationObserver((mutations, self) => {
       const addedNodes = mutations.flatMap((mutation) =>
         Array.from(mutation.addedNodes),
       );
@@ -10,7 +10,7 @@ class Chat {
       );
 
       if (this.PLAYER_EL) {
-        observer.disconnect();
+        self.disconnect();
 
         this.loadChatObserver.observe(this.PLAYER_EL, {
           childList: true,
@@ -19,7 +19,7 @@ class Chat {
       }
     });
 
-    this.loadChatObserver = new MutationObserver((mutations, observer) => {
+    this.loadChatObserver = new MutationObserver((mutations) => {
       const addedNodes = mutations.flatMap((mutation) =>
         Array.from(mutation.addedNodes),
       );

@@ -1,6 +1,6 @@
 class TheaterMode {
   constructor() {
-    this.loadPlayerObserver = new MutationObserver((mutations, observer) => {
+    this.loadPlayerObserver = new MutationObserver((mutations, self) => {
       const addedNodes = mutations.flatMap((mutation) =>
         Array.from(mutation.addedNodes),
       );
@@ -10,7 +10,7 @@ class TheaterMode {
       );
 
       if (this.PLAYER_EL) {
-        observer.disconnect();
+        self.disconnect();
 
         this.theaterObserver.observe(this.PLAYER_EL, {
           attributes: true,
@@ -19,7 +19,7 @@ class TheaterMode {
         });
 
         if (this.PLAYER_EL.hasAttribute("theater"))
-          setTimeout(() => this.PLAYER_EL.scrollIntoView(), 10);
+          setTimeout(() => this.scrollToFullScreen(1000), 10);
       }
     });
 
@@ -35,11 +35,18 @@ class TheaterMode {
         });
     });
 
-    this.styleObserver = new MutationObserver((_mutations, observer) => {
-      observer.disconnect();
-
-      setTimeout(() => this.PLAYER_EL.scrollIntoView(), 10);
+    this.styleObserver = new MutationObserver((_mutations, self) => {
+      self.disconnect();
+      setTimeout(() => this.scrollToFullScreen(1000), 10);
     });
+  }
+
+  scrollToFullScreen(maxTime) {
+    this.PLAYER_EL.scrollIntoView();
+
+    if (window.scrollY == 0 && maxTime > 0) {
+      setTimeout(() => this.scrollToFullScreen(maxTime - 20), 20);
+    }
   }
 
   init(ytAppEl) {
