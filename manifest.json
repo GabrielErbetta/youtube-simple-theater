@@ -11,7 +11,7 @@
     {
       "matches": ["https://*.youtube.com/*"],
       "run_at": "document_end",
-      "js": ["theater-mode.js", "chat.js", "init.js"],
+      "js": ["theater-mode.js", "chat.js", "page.js", "init.js"],
       "css": ["theater-mode.css"]
     }
   ],

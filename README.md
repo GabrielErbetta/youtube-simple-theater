@@ -8,6 +8,13 @@ But check out my inspirations [Better YouTube Theatre Mode](https://github.com/S
 
 ### TODO
 - [x] Handle chat for livestreams
-- [ ] Firefox version
-- [ ] Proper icon
-- [ ] Publish in the extension stores
+- [x] Firefox version
+- [x] Proper icon
+- [x] Publish in the extension stores
+- [x] Refactor code
+- [x] Issue: Doesn't load properly when opening a video from YouTube homepage
+- [x] Issue: Doesn't load properly when opening a video from another video
+- [x] Issue: Sometimes the `scrollToFullScreen` is overriden by a subsequent scroll to the top of the page
+- [ ] Issue: Requires reloading open tabs after install
+- [ ] Better README
+- [ ] Better description for the extension store pages

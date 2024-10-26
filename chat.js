@@ -1,49 +1,42 @@
 class Chat {
   constructor() {
-    this.loadContainerObserver = new MutationObserver((mutations, self) => {
+    this.$player = null;
+    this.$chat = null;
+    this.$header = null;
+
+    this.chatObserver = this.createChatObserver();
+    this.chatTheaterObserver = this.createChatTheaterObserver();
+
+    this.scrollListener = null;
+  }
+
+  init(player) {
+    this.$player = player;
+    this.onPlayerLoaded();
+  }
+
+  // OBSERVERS
+  //
+  createChatObserver() {
+    return new MutationObserver((mutations) => {
       const addedNodes = mutations.flatMap((mutation) =>
-        Array.from(mutation.addedNodes),
+        Array.from(mutation.addedNodes)
       );
 
-      this.PLAYER_EL = addedNodes.find(
-        (node) => node.nodeName === "YTD-WATCH-FLEXY",
+      const chat = addedNodes.find(
+        (node) => node.nodeName === "YTD-LIVE-CHAT-FRAME"
       );
 
-      if (this.PLAYER_EL) {
-        self.disconnect();
-
-        this.loadChatObserver.observe(this.PLAYER_EL, {
-          childList: true,
-          subtree: true,
-        });
+      if (chat) {
+        this.$chat = chat;
+        this.onChatLoaded();
       }
     });
+  }
 
-    this.loadChatObserver = new MutationObserver((mutations) => {
-      const addedNodes = mutations.flatMap((mutation) =>
-        Array.from(mutation.addedNodes),
-      );
-
-      const chatEl = addedNodes.find(
-        (node) => node.nodeName === "YTD-LIVE-CHAT-FRAME",
-      );
-
-      if (chatEl) {
-        this.CHAT_EL = chatEl;
-
-        if (this.CHAT_EL.hasAttribute("theater-watch-while"))
-          this.addScrollEvent();
-
-        this.toggleResizeObserver.observe(this.CHAT_EL, {
-          attributes: true,
-          attributeOldValue: true,
-          attributeFilter: ["theater-watch-while"],
-        });
-      }
-    });
-
-    this.toggleResizeObserver = new MutationObserver(() => {
-      if (this.CHAT_EL.hasAttribute("theater-watch-while")) {
+  createChatTheaterObserver() {
+    return new MutationObserver(() => {
+      if (this.$chat.hasAttribute("theater-watch-while")) {
         this.addScrollEvent();
       } else {
         this.removeScrollEvent();
@@ -51,11 +44,32 @@ class Chat {
     });
   }
 
+  // EVENTS
+  //
+  onPlayerLoaded() {
+    this.chatObserver.observe(this.$player, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  onChatLoaded() {
+    if (this.$chat.hasAttribute("theater-watch-while")) this.addScrollEvent();
+
+    this.chatTheaterObserver.observe(this.$chat, {
+      attributes: true,
+      attributeOldValue: true,
+      attributeFilter: ["theater-watch-while"],
+    });
+  }
+
+  // HELPERS
+  //
   addScrollEvent = () => {
     this.scrollListener = window.addEventListener(
       "scroll",
       this.chatResizeOnScroll,
-      { passive: true },
+      { passive: true }
     );
   };
 
@@ -64,18 +78,11 @@ class Chat {
   };
 
   chatResizeOnScroll = (e) => {
-    this.HEADER_EL = this.HEADER_EL || document.querySelector("ytd-masthead");
+    this.$header = this.$header || document.querySelector("ytd-masthead");
 
-    if (this.CHAT_EL) {
-      const top = Math.max(0, this.HEADER_EL.offsetHeight - window.scrollY);
-      this.CHAT_EL.setAttribute("style", `top: ${top}px !important;`);
+    if (this.$chat) {
+      const top = Math.max(0, this.$header.offsetHeight - window.scrollY);
+      this.$chat.setAttribute("style", `top: ${top}px !important;`);
     }
   };
-
-  init(ytAppEl) {
-    this.loadContainerObserver.observe(ytAppEl, {
-      childList: true,
-      subtree: true,
-    });
-  }
 }

@@ -1,82 +1,43 @@
 class TheaterMode {
   constructor() {
-    console.log("CONSTRUCTOR")
     this.$player = null;
+    this.$video = null;
+    this.$navigationProgress = null;
 
-    this.playerObserver = this.createPlayerObserver();
     this.theaterObserver = this.createTheaterObserver();
     this.styleObserver = this.createStyleObserver();
   }
 
-  init(ytAppEl) {
-    console.log("INIT");
-    const player = document.querySelector("ytd-watch-flexy");
-
-    if (player) {
-      this.$player = player;
-      this.onPlayerLoaded();
-    } else {
-      this.playerObserver.observe(ytAppEl, {
-        childList: true,
-        subtree: true,
-      });
-    }
+  init(player) {
+    this.$player = player;
+    this.onPlayerLoaded();
   }
 
   // OBSERVERS
   //
-  createPlayerObserver() {
-    return new MutationObserver((mutations, self) => {
-      console.log("LOADPLAYER");
-      const addedNodes = mutations.flatMap((mutation) =>
-        Array.from(mutation.addedNodes),
-      );
-
-      const player = addedNodes.find(
-        (node) => node.nodeName === "YTD-WATCH-FLEXY",
-      );
-
-      if (player) {
-        console.log("LOADPLAYER - PLAYER_EL FOUND");
-        console.log(player)
-
-        this.$player = player;
-        self.disconnect();
-
-        this.onPlayerLoaded();
-      }
-    });
-  }
-
   createTheaterObserver() {
     return new MutationObserver((mutations) => {
-      console.log("THEATER OBSERVER");
       const theaterMutation = mutations.find(
-        (mutation) => mutation.oldValue == null,
+        (mutation) => mutation.oldValue == null
       );
 
-      if (theaterMutation?.target?.hasAttribute("theater")) {
+      if (theaterMutation?.target?.hasAttribute("theater"))
         this.onTheaterAdded();
-        console.log("THEATER OBSERVER - HAS TEATHER");
-      }
     });
   }
 
   createStyleObserver() {
     return new MutationObserver((_mutations, self) => {
-      console.log("STYLE OBSERVER");
       self.disconnect();
       setTimeout(() => this.scrollToFullScreen(1000), 10);
     });
   }
 
-  // ACTIONS
+  // EVENTS
   //
   onPlayerLoaded() {
-    if (this.$player.hasAttribute("theater")) {
-      console.log("LOADPLAYER - PLAYER_EL HAS THEATER");
+    if (this.$player.hasAttribute("theater"))
       setTimeout(() => this.scrollToFullScreen(1000), 10);
-    }
 
     this.theaterObserver.observe(this.$player, {
       attributes: true,
@@ -92,13 +53,33 @@ class TheaterMode {
     });
   }
 
+  // HELPERS
+  //
+  isNavigating() {
+    if (!this.$navigationProgress)
+      this.$navigationProgress = document.querySelector(
+        "yt-page-navigation-progress"
+      );
+
+    return (
+      this.$navigationProgress &&
+      !this.$navigationProgress.hasAttribute("hidden")
+    );
+  }
+
+  isLoadingVideo() {
+    if (!this.$video) this.$video = this.$player.querySelector("video");
+
+    return !this.$video;
+  }
+
   scrollToFullScreen(maxTime) {
-    console.log("FULLSCREEN");
+    if (this.isNavigating() || this.isLoadingVideo())
+      return setTimeout(() => this.scrollToFullScreen(maxTime - 10), 10);
+
     this.$player.scrollIntoView();
 
-    if (window.scrollY == 0 && maxTime > 0) {
-      console.log("FULLSCREEN FAILED");
-      setTimeout(() => this.scrollToFullScreen(maxTime - 20), 20);
-    }
+    if (window.scrollY == 0 && maxTime > 0)
+      setTimeout(() => this.scrollToFullScreen(maxTime - 10), 10);
   }
 }
